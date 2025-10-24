@@ -1,0 +1,227 @@
+v<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cats Club — Subhan Ajaz</title>
+  <style>
+    body { margin:0; font-family:Arial, sans-serif; background:#0f172a; color:#e6eef8; }
+    .container { max-width:1100px; margin:20px auto; padding:20px; }
+
+    header { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+    .avatar { width:120px; height:120px; border-radius:14px; background:linear-gradient(135deg,#ff6b6b,#4f46e5); display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:22px; cursor:pointer; border:2px solid rgba(255,255,255,0.1); }
+
+    .meta { flex:1; }
+    .meta h1 { margin:0; font-size:28px; }
+    .meta p { margin:6px 0 14px; color:#bcd3ff; }
+
+    .big-buttons { display:flex; gap:15px; flex-wrap:wrap; margin-bottom:20px; }
+    .big-btn { flex:1; padding:16px; border:none; border-radius:12px; cursor:pointer; font-weight:bold; font-size:16px; color:white; transition:0.2s; }
+    .big-btn:hover { transform: translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,0.3); }
+    .subscribe { background:linear-gradient(90deg,#ff6b6b,#4f46e5); }
+    .visit { background:linear-gradient(90deg,#4f46e5,#ff6b6b); }
+    .upload-video { background:#0b1220; border:1px solid #4f46e5; color:#4f46e5; }
+
+    .grid { display:grid; grid-template-columns:1fr 360px; gap:20px; }
+    .card { background:rgba(255,255,255,0.02); padding:14px; border-radius:14px; border:1px solid rgba(255,255,255,0.03); }
+
+    .video-row, .gallery-row { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; margin-bottom:12px; }
+    iframe, .gallery-item { width:100%; height:200px; border-radius:10px; border:0; object-fit:cover; }
+
+    .comment-section { margin-top:20px; }
+    .comment-box input, .comment-box textarea { width:100%; padding:8px; margin:6px 0; border-radius:8px; border:1px solid #444; background:#071229; color:#e6eef8; }
+    .comment-box button { padding:10px; border:none; border-radius:10px; background:#4f46e5; color:white; font-weight:bold; cursor:pointer; transition:0.2s; }
+    .comment-box button:hover { background:#6b5ee0; }
+    .comment-list .comment-item { background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:8px; margin-bottom:6px; }
+
+    input[type=file] { margin-top:10px; }
+    @media(max-width:880px){.grid{grid-template-columns:1fr;}.avatar{width:96px;height:96px;}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="avatar" id="avatar">SA</div>
+      <div class="meta">
+        <h1>Cats Club — Subhan Ajaz</h1>
+        <p>Say “Yo!” to the interactive cat zone!</p>
+        <div class="big-buttons">
+          <button class="big-btn subscribe" onclick="window.open('https://www.youtube.com/channel/UCt9AEb3JH0K1q0fiy3LyiYA?sub_confirmation=1','_blank')">Subscribe</button>
+          <button class="big-btn visit" onclick="window.open('https://www.youtube.com/channel/UCt9AEb3JH0K1q0fiy3LyiYA','_blank')">Visit Channel</button>
+          <button class="big-btn upload-video" id="uploadBtn">Upload Video</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card videos">
+        <h2>Videos</h2>
+        <div class="video-row" id="videoRow"></div>
+
+        <h2>Gallery</h2>
+        <div class="gallery-row" id="galleryRow"></div>
+        <input type="file" id="galleryUpload" accept="image/*">
+
+        <div class="comment-section">
+          <h3>Comments</h3>
+          <div class="comment-box">
+            <input type="text" id="commentName" placeholder="Your Name">
+            <textarea id="commentText" placeholder="Your Comment"></textarea>
+            <button id="commentBtn">Post Comment</button>
+          </div>
+          <div class="comment-list" id="commentList"></div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h3>Profile Upload</h3>
+        <input type="file" id="profileUpload" accept="image/*">
+      </aside>
+    </main>
+
+    <footer style="margin-top:20px;text-align:center;color:#97b4ff;">Built with ❤️ for cat lovers.</footer>
+  </div>
+
+  <script>
+    const avatar = document.getElementById('avatar');
+    avatar.onclick = () => document.getElementById('profileUpload').click();
+
+    document.getElementById('profileUpload').onchange = (e) => {
+      const file = e.target.files[0];
+      if(file){
+        const url = URL.createObjectURL(file);
+        avatar.style.background = `url('${url}') center/cover no-repeat`;
+        avatar.textContent = '';
+      }
+    };
+
+    const uploadBtn = document.getElementById('uploadBtn');
+    uploadBtn.onclick = () => {
+      const videoId = prompt('Enter YouTube Video ID');
+      if(videoId){
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube.com/embed/${videoId}`;
+        iframe.allowFullscreen = true;
+        document.getElementById('videoRow').appendChild(iframe);
+      }
+    };
+
+    const commentBtn = document.getElementById('commentBtn');
+    commentBtn.onclick = () => {
+      const name = document.getElementById('commentName').value.trim();
+      const text = document.getElementById('commentText').value.trim();
+      if(name && text){
+        const div = document.createElement('div');
+        div.className = 'comment-item';
+        div.innerHTML = `<strong>${name}:</strong> ${text}`;
+        document.getElementById('commentList').appendChild(div);
+        document.getElementById('commentName').value = '';
+        document.getElementById('commentText').value = '';
+      } else alert('Enter name and comment.');
+    };
+
+    const galleryUpload = document.getElementById('galleryUpload');
+    galleryUpload.onchange = (e) => {
+      const file = e.target.files[0];
+      if(file){
+        const url = URL.createObjectURL(file);
+        const img = document.createElement('img');
+        img.src = url;
+        img.className = 'gallery-item';
+        document.getElementById('galleryRow').appendChild(img);
+      }
+    };
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cats Club — About</title>
+  <style>
+    body { margin:0; font-family:Arial, sans-serif; background:#0f172a; color:#e6eef8; }
+    .container { max-width:900px; margin:50px auto; padding:20px; background:rgba(255,255,255,0.02); border-radius:14px; border:1px solid rgba(255,255,255,0.05); }
+    h1 { text-align:center; color:#ff6b6b; }
+    p { line-height:1.6; font-size:16px; color:#bcd3ff; }
+    a { color:#4f46e5; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    footer { text-align:center; margin-top:30px; color:#97b4ff; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>About Cats Club</h1>
+    <p>Welcome to <strong>Cats Club</strong>, a lively and interactive hub for all cat enthusiasts curated by Subhan Ajaz. Here, you can explore the cutest, funniest, and most playful cat videos, share your own experiences, and interact with fellow cat lovers through comments and gallery uploads.</p>
+
+    <p>Our channel is dedicated to celebrating the charm and quirks of cats, whether they are dancing, exploring, or simply being adorable. Cats Club offers a family-friendly environment where everyone can enjoy high-quality cat content and engage with the community.</p>
+
+    <p>Join us on our journey of cuteness and fun! <a href="index.html">Back to Home</a></p>
+
+    <footer>© 2025 Cats Club | Made with ❤️ by Subhan Ajaz</footer>
+  </div>
+</body>
+</html>
+<a class="big-btn" href="cats_club_description.html">About Cats Club</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Submit Your Channel — Cats Club</title>
+<style>
+  body { font-family:Arial, sans-serif; background:#0f172a; color:#e6eef8; margin:0; }
+  .container { max-width:600px; margin:50px auto; padding:20px; background:rgba(255,255,255,0.02); border-radius:14px; border:1px solid rgba(255,255,255,0.05); }
+  h1 { text-align:center; color:#ff6b6b; }
+  input { width:100%; padding:10px; margin:8px 0; border-radius:8px; border:1px solid #444; background:#071229; color:#e6eef8; }
+  button { width:100%; padding:12px; border:none; border-radius:10px; background:#4f46e5; color:white; font-weight:bold; cursor:pointer; transition:0.2s; }
+  button:hover { background:#6b5ee0; }
+  .owner-links { margin-top:20px; background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; display:none; }
+  .owner-links li { margin-bottom:6px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Submit Your Channel</h1>
+  <input type="text" id="visitorName" placeholder="Your Name">
+  <input type="text" id="visitorLink" placeholder="Your YouTube Channel Link">
+  <button id="submitBtn">Submit</button>
+
+  <button style="margin-top:20px; background:#ff6b6b;" id="ownerAccessBtn">Owner Access</button>
+
+  <ul class="owner-links" id="ownerLinks"></ul>
+</div>
+
+<script>
+  const submissions = [];
+  const submitBtn = document.getElementById('submitBtn');
+  const ownerBtn = document.getElementById('ownerAccessBtn');
+  const ownerList = document.getElementById('ownerLinks');
+
+  submitBtn.onclick = () => {
+    const name = document.getElementById('visitorName').value.trim();
+    const link = document.getElementById('visitorLink').value.trim();
+    if(name && link){
+      submissions.push({name, link});
+      alert('Your channel link has been submitted!');
+      document.getElementById('visitorName').value = '';
+      document.getElementById('visitorLink').value = '';
+    } else alert('Please fill both fields.');
+  };
+
+  ownerBtn.onclick = () => {
+    const password = prompt('Enter Owner Password');
+    if(password === 'catsclubowner'){ // Change password as you like
+      ownerList.style.display = 'block';
+      ownerList.innerHTML = '';
+      submissions.forEach(sub => {
+        const li = document.createElement('li');
+        li.innerHTML = `<strong>${sub.name}:</strong> <a href='${sub.link}' target='_blank'>${sub.link}</a>`;
+        ownerList.appendChild(li);
+      });
+    } else alert('Incorrect password!');
+  };
+</script>
+</body>
+</html
